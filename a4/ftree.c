@@ -53,7 +53,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
 
     // Set the IP and port of the server to connect to
     struct sockaddr_in *server;
-    memset(&server, '\0', sizeof(r));
+    memset(&server, '\0', sizeof(server));
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
     server.sin_addr.s_addr = INADDR_ANY;
