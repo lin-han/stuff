@@ -37,7 +37,7 @@ struct request {
     int size;
 };
 
-int rcopy_client(char *source, char *base, char *host, unsigned short port);
+int rcopy_client(char *source, char *host, unsigned short port);
 void rcopy_server(unsigned short port);
 
 #endif // _FTREE_H_
