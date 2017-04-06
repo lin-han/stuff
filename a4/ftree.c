@@ -313,23 +313,13 @@ void rcopy_server(unsigned short port) {
         perror("server: socket");
         exit(1);
     }
-	
-	struct hostent *he;
-    
-    // Get host info
-    if ((he = gethostbyname(host)) == NULL) {
-        perror("gethostbyname");
-        exit(1);
-    }
-
-   
 
     // Set information about the port (and IP) we want to be connected to.
     struct sockaddr_in server;
     memset(&server, '\0', sizeof(server));
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
-	server->sin_addr = *((struct in_addr *)he->h_addr);
+    server.sin_addr.s_addr = INADDR_ANY;
     memset(&server.sin_zero, '\0', sizeof(server));
 	
 	// Make sure we can reuse the port immediately after the
