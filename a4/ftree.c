@@ -37,7 +37,7 @@ int check_same(struct request *request, int lst, struct stat *buf);
  */
 int rcopy_client(char *source, char *host, unsigned short port) {
     // Create the socket FD
-    int *sock_fd;
+    int *sock_fd = malloc(sizeof(int));
     *sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     struct hostent *he;
     if (*sock_fd < 0) {
@@ -52,7 +52,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
     }
 
     // Set the IP and port of the server to connect to
-    struct sockaddr_in *server;
+    struct sockaddr_in *server = malloc(sizeof(struct sockaddr_in));
     server->sin_family = AF_INET;
     server->sin_port = htons(port);
     server->sin_addr = *((struct in_addr *)he->h_addr);
