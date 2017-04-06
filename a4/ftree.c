@@ -86,7 +86,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
  */
 //int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
     int error = 0;
-    
+    char *basename_relative_path = basename(source);
     // Get file status
     struct stat sourcebuf;
     if (lstat(source, &sourcebuf) == -1) {
@@ -94,7 +94,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
         return 1;
     }
     
-    char *basename_relative_path = basename(source);
+    
     
     // Initialize and fill in the struct request to send to the server and
     // translate any numeric types to network order
