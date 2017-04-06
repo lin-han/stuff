@@ -64,20 +64,19 @@ int rcopy_client(char *source, char *host, unsigned short port) {
         return 1;
     }
     
-    char *bname = malloc(MAXPATH);
-    bname = basename(source);
+    char *bname = basename(source);
     
     // Copy files
-    int error = copy_file(source, bname, sock_fd, server);
+    //int error = copy_file(source, bname, sock_fd, server);
     
     // Close the socket after all files have been transferred
-    close(*sock_fd);
+    //close(*sock_fd);
     
     // Return 0 only if copy_file returned 0,
     // having encountered no errors during file transfers
     // Otherwise, return -1
-    return error;
-}
+    //return error;
+//}
 
 /* Copy the file at source in client to basename_relative_path in server using the socket sock_fd.
  * Fork a new client and create a new socket when the server responds to a request with SENDFILE,
@@ -85,7 +84,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
  * walk through the files rooted there and copy files accordingly.
  * Return 0 if no errors are encountered during file transfers, or -1 otherwise.
  */
-int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
+//int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
     int error = 0;
     
     // Get file status
