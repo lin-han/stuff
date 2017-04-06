@@ -94,7 +94,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
         return 1;
     }
     
-    char *bname = basename(source);
+    char *basename_relative_path = basename(source);
     
     // Initialize and fill in the struct request to send to the server and
     // translate any numeric types to network order
