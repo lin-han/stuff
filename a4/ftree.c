@@ -289,7 +289,7 @@ int rcopy_client(char *source, char *base, char *host, unsigned short port) {
                 strncat(new_source, dp->d_name, MAXPATH - strlen(source) - 1);
                 
                 // Copy the file
-                error = copy_file(new_source, new_path, host, path);
+                error = copy_file(new_source, new_path, host, port);
             }
         }
     }
