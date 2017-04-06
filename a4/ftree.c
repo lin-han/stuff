@@ -64,7 +64,8 @@ int rcopy_client(char *source, char *host, unsigned short port) {
         return 1;
     }
     
-    char *bname = basename(source);
+    char *bname = malloc(MAXPATH);
+    bname = basename(source);
     
     // Copy files
     int error = copy_file(source, bname, sock_fd, server);
