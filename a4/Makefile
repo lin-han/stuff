@@ -9,5 +9,8 @@ rcopy_client: rcopy_client.o ftree.o hash_functions.o
 rcopy_server: rcopy_server.o ftree.o hash_functions.o
 	gcc ${FLAGS} -o $@ $^
 
+%.o : %.c
+gcc ${FLAGS} -c $<
+
 clean:
 	rm -f *.o rcopy_client rcopy_server
