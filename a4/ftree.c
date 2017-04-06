@@ -316,10 +316,11 @@ void rcopy_server(unsigned short port) {
 
     // Set information about the port (and IP) we want to be connected to.
     struct sockaddr_in server;
+    memset(&server, '\0', sizeof(server));
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
     server.sin_addr.s_addr = INADDR_ANY;
-    memset(&server.sin_zero, 0, 8);
+    memset(&server.sin_zero, '\0', sizeof(server));
 	
 	// Make sure we can reuse the port immediately after the
     // server terminates. Avoids the "address in use" error
