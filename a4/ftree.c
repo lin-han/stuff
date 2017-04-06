@@ -37,7 +37,7 @@ int check_same(struct request *request, int lst, struct stat *buf);
  */
 int rcopy_client(char *source, char *host, unsigned short port) {
     // Create the socket FD
-    int *sock_fd;
+    int *sock_fd = malloc(sizeof(int));
     *sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     struct hostent *he;
     if (*sock_fd < 0) {
