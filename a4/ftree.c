@@ -35,7 +35,7 @@ int check_same(struct request *request, int lst, struct stat *buf);
  * Copy the files at source in client to the server.
  * Return 0 if no errors are encountered during file transfers, or -1 otherwise.
  */
-int rcopy_client(char *source, char *host, unsigned short port) {
+int rcopy_client(char *source, char *base, char *host, unsigned short port) {
     // Create the socket FD
     int *sock_fd;
     *sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -289,7 +289,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
                 strncat(new_source, dp->d_name, MAXPATH - strlen(source) - 1);
                 
                 // Copy the file
-                error = copy_file(new_source, new_path, sock_fd, server);
+                error = copy_file(new_source, new_path, host, path);
             }
         }
     }
