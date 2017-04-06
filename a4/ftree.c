@@ -67,16 +67,16 @@ int rcopy_client(char *source, char *host, unsigned short port) {
     char *bname = basename(source);
     
     // Copy files
-    //int error = copy_file(source, bname, sock_fd, server);
+    int error = copy_file(source, bname, sock_fd, server);
     
-    // Close the socket after all files have been transferred
-    //close(*sock_fd);
+    Close the socket after all files have been transferred
+    close(*sock_fd);
     
     // Return 0 only if copy_file returned 0,
     // having encountered no errors during file transfers
     // Otherwise, return -1
-    //return error;
-//}
+    return error;
+}
 
 /* Copy the file at source in client to basename_relative_path in server using the socket sock_fd.
  * Fork a new client and create a new socket when the server responds to a request with SENDFILE,
@@ -84,7 +84,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
  * walk through the files rooted there and copy files accordingly.
  * Return 0 if no errors are encountered during file transfers, or -1 otherwise.
  */
-//int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
+int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
     int error = 0;
     char *basename_relative_path = basename(source);
     // Get file status
@@ -233,7 +233,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
         // If the file is a directory
         // fill in the request type and hash to send to the server
         int index;
-        char *hash_val;
+        char *hash_val = malloc(BLOCKSIZE);
         for (index = 0; index < BLOCKSIZE; index++) {
             hash_val[index] = '\0';
         }
@@ -272,7 +272,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
                 return 1;
             }
             
-            struct dirent *dp;
+            struct dirent *dp = malloc(sizeof(struct dirent));
             
             // Skip files that start with "."
             if ((dp->d_name)[0] != '.') {
@@ -289,7 +289,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
                 strncat(new_source, dp->d_name, MAXPATH - strlen(source) - 1);
                 
                 // Copy the file
-                //error = copy_file(new_source, new_path, sock_fd, server);
+                error = copy_file(new_source, new_path, sock_fd, server);
             }
         }
     }
