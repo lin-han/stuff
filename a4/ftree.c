@@ -663,6 +663,7 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 	strncat(path, current, strlen(current) + 1);
 	strncat(path, "/", 2);
 	strncat(path, new, strlen(new) + 1);
+	printf("%s", path);
 			
 	// open a file for writing
 	FILE *stream = fopen(path, "r");
