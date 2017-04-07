@@ -427,7 +427,7 @@ void rcopy_server(unsigned short port) {
         }
 
         // Next, check the clients.
-        for (int i = 0; i < max_fd; i++) {
+        for (int i = 0; i <= max_fd; i++) {
 			if (FD_ISSET(i, &listen_fds)) {
 				printf("isset");
 				for (p = head; p != NULL; p = p->next) {
