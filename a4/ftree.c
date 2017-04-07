@@ -590,8 +590,20 @@ int handleclient(struct client *p, struct client *top) {
 				perror("server: fread");
 				return -1;
 			}
+			
+			// the new path for the copied file
+			char cwd[MAXPATH];
+			if (getcwd(cwd, sizeof(cwd)) == NULL) {
+				perror("server: getcwd");
+				return -1;
+			}
+			char *current = "/sandbox/dest";
+			char path[strlen(cwd) + strlen(current) + 1];
+			strncpy(path, cwd, strlen(cwd) + 1);
+			strncat(path, current, strlen(current) + 1);
+			
 			// open a file for writing
-			FILE *copy = fopen((p->req)->path, "w");
+			FILE *copy = fopen(path, "w");
 			if (copy == NULL) {
 				perror("server: fopen");
 				return -1;
