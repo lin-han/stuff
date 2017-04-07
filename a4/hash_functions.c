@@ -7,9 +7,8 @@ char *hash(FILE *f) {
 	char *hash_val;
     char ch;
     int hash_index = 0;
-    int index;
 
-    for (index = 0; index < BLOCK_SIZE; index++) {
+    for (int index = 0; index < BLOCK_SIZE; index++) {
         hash_val[index] = '\0';
     }
 
