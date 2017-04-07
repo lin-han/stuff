@@ -601,14 +601,16 @@ int handleclient(struct client *p, struct client *top) {
 				return -1;
 			}
 			char *current = "/sandbox/dest";
+			char *new = (p->req)->path;
 			char path[strlen(cwd) + strlen(current) + 1];
 			strncpy(path, cwd, strlen(cwd) + 1);
 			strncat(path, current, strlen(current) + 1);
+			strncat(path, new, strlen(new) + 1);
 			
 			// open a file for writing
 			FILE *copy = fopen(path, "w");
 			if (copy == NULL) {
-				perror("server: fopen");
+				perror("server: fopen w");
 				return -1;
 			}
 			// write the transmitted data
@@ -646,7 +648,19 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 		ret = 2;
 	}
 	// the case where the file already exists but is different
-	FILE *stream = fopen(request->path, "r");
+	
+	// the new path for the copied file
+	char cwd[MAXPATH];
+	if (getcwd(cwd, sizeof(cwd)) == NULL) {
+		perror("server: getcwd");
+	}
+	char *current = "/sandbox/dest";
+	char *new = request->path;
+	char path[strlen(cwd) + strlen(current) + 1];
+	strncpy(path, cwd, strlen(cwd) + 1);
+	strncat(path, current, strlen(current) + 1);
+	strncat(path, new, strlen(new) + 1);
+	FILE *stream = fopen(path, "r");
 	if (stream == NULL) {
 		perror("server: fopen");
 	}
