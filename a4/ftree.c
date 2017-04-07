@@ -28,6 +28,7 @@ struct client {
 static struct client *addclient(struct client *top, int fd, struct in_addr addr);
 static struct client *removeclient(struct client *top, int fd);
 int handleclient(struct client *p, struct client *top);
+int bindandlisten(void);
 int check_same(struct request *request, int lst, struct stat *buf);
 int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server);
 
@@ -380,42 +381,10 @@ void rcopy_server(unsigned short port) {
 	struct client *p;
 	struct sockaddr_in q;
 	socklen_t len;
+	int nready;
 	
-	// Create the socket FD.
-    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock_fd < 0) {
-        perror("server: socket");
-        exit(1);
-    }
-
-    // Set information about the port (and IP) we want to be connected to.
-    struct sockaddr_in server;
-    memset(&server, '\0', sizeof(server));
-    server.sin_family = AF_INET;
-    server.sin_port = htons(port);
-    server.sin_addr.s_addr = INADDR_ANY;
-    memset(&server.sin_zero, '\0', sizeof(server));
-	
-	// Make sure we can reuse the port immediately after the
-    // server terminates. Avoids the "address in use" error
-    status = setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR,
-        (const char *) &on, sizeof(on));
-    if(status == -1) {
-        perror("setsockopt -- REUSEADDR");
-    }
-
-    // Bind the selected port to the socket.
-    if (bind(sock_fd, (struct sockaddr *)&server, sizeof(server)) < 0) {
-        perror("server: bind");
-        close(sock_fd);
-        exit(1);
-    }
-
-    // Announce willingness to accept connections on this socket.
-    if (listen(sock_fd, 1) < 0) {
-        perror("server: listen");
-        exit(1);
-    }
+	// Create the socket FD, bind and listen
+    int sock_fd = bindandlisten();
 	
 	// The client data transfer accept loop. First, we prepare to listen to multiple
     // file descriptors by initializing a set of file descriptors.
@@ -427,7 +396,8 @@ void rcopy_server(unsigned short port) {
     while (1) {
         // select updates the fd_set it receives, so we use a copy and retain the original.
         listen_fds = all_fds;
-        int nready = select(max_fd + 1, &listen_fds, NULL, NULL, NULL);
+        
+		nready = select(max_fd + 1, &listen_fds, NULL, NULL, NULL);
 		if (nready == 0) {
 			printf("No response from clients");
 		}
@@ -707,4 +677,42 @@ static struct client *removeclient(struct client *top, int fd) {
                  fd);
     }
     return top;
+}
+
+ /* bind and listen, abort on error
+  * returns FD of listening socket
+  */
+int bindandlisten(void) {
+    struct sockaddr_in r;
+    int listenfd;
+
+	// Create the socket FD
+    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("socket");
+        exit(1);
+    }
+	
+	// Make sure we can reuse the port immediately after the
+    // server terminates. Avoids the "address in use" error
+    int yes = 1;
+    if ((setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) == -1) {
+        perror("setsockopt");
+    }
+    memset(&r, '\0', sizeof(r));
+    r.sin_family = AF_INET;
+    r.sin_addr.s_addr = INADDR_ANY;
+    r.sin_port = htons(PORT);
+
+	// Bind the selected port to the socket.
+    if (bind(listenfd, (struct sockaddr *)&r, sizeof r)) {
+        perror("bind");
+        exit(1);
+    }
+
+	// Announce willingness to accept connections on this socket.
+    if (listen(listenfd, 5)) {
+        perror("listen");
+        exit(1);
+    }
+    return listenfd;
 }
