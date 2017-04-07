@@ -29,6 +29,7 @@ static struct client *addclient(struct client *top, int fd, struct in_addr addr)
 static struct client *removeclient(struct client *top, int fd);
 int handleclient(struct client *p, struct client *top);
 int check_same(struct request *request, int lst, struct stat *buf);
+int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server);
 
 /* Connect to the server with host and port. Create a new socket
  * file descriptor to connect to and communicate with the server.
@@ -69,7 +70,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
     // Copy files
     int error = copy_file(source, bname, sock_fd, server);
     
-    Close the socket after all files have been transferred
+    // Close the socket after all files have been transferred
     close(*sock_fd);
     
     // Return 0 only if copy_file returned 0,
@@ -86,7 +87,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
  */
 int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
     int error = 0;
-    char *basename_relative_path = basename(source);
+    
     // Get file status
     struct stat sourcebuf;
     if (lstat(source, &sourcebuf) == -1) {
@@ -94,7 +95,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         return 1;
     }
     
-    
+    char *bname = basename(source);
     
     // Initialize and fill in the struct request to send to the server and
     // translate any numeric types to network order
