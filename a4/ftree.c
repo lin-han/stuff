@@ -553,7 +553,7 @@ int handleclient(struct client *p, struct client *top) {
 				struct stat *buf = malloc(sizeof(struct stat));
 				int lst = lstat(path, buf);
 				perror("lstat");
-				printf("lst %d type %d", lst, request->type);
+				printf("lst %d type %d", lst, (p->req)->type);
 				int same = check_same((p->req), lst, buf);
 				// the files are the same, update the permissions
 				if (same == 0) {
