@@ -432,10 +432,8 @@ void rcopy_server(unsigned short port) {
         // Next, check the clients.
         for (int i = 0; i <= max_fd; i++) {
 			if (FD_ISSET(i, &listen_fds)) {
-				printf("isset");
 				for (p = head; p != NULL; p = p->next) {
 					if (p->fd == i) {
-						printf("handleclient");
 						int result = handleclient(p, head);
 						if (result == -1) {
 							int tmp_fd = p->fd;
@@ -460,7 +458,6 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the request type and store it in the request struct in the corresponding client struct
 		case AWAITING_TYPE :
 		{
-			
 			int type;
 			if ((read_result = read(p->fd, &type, sizeof(int))) < 0) {
 				perror("read");
@@ -475,7 +472,6 @@ int handleclient(struct client *p, struct client *top) {
 		}
 		case AWAITING_PATH :
 		{
-			printf("path\n");
 			char buf[MAXPATH];
 			if ((read_result = read(p->fd, buf, MAXPATH)) < 0) {
 				perror("read");
@@ -489,7 +485,6 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the mode and store
 		case AWAITING_PERM :
 		{
-			printf("perm\n");
 			mode_t mode;
 			if ((read_result = read(p->fd, &mode, sizeof(mode))) < 0) {
 				perror("read");
@@ -504,7 +499,6 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the hash and store
 		case AWAITING_HASH :
 		{
-			printf("hash\n");
 			char hash[BLOCKSIZE];
 			if ((read_result = read(p->fd, hash, BLOCKSIZE)) < 0) {
 				perror("read");
@@ -518,7 +512,6 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the size and store
 		case AWAITING_SIZE :
 		{
-			printf("size\n");
 			int size;
 			int signal;
 			if ((read_result = read(p->fd, &size, sizeof(int))) < 0) {
@@ -604,7 +597,6 @@ int handleclient(struct client *p, struct client *top) {
 		// the request type is TRANSFILE
 		case AWAITING_DATA :
 		{
-			printf("data\n");
 			char data[MAXDATA];
 			// read in the transmitted file data
 			if (read(p->fd, data, MAXDATA) < MAXDATA) {
@@ -702,7 +694,6 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 static struct client *addclient(struct client *top, int fd, struct in_addr addr) {
 	struct client *p = malloc(sizeof(struct client));
 	struct request *req = malloc(sizeof(struct request));
-	
 	if (!p) {
 		perror("server: malloc");
 		exit(1);
@@ -712,11 +703,6 @@ static struct client *addclient(struct client *top, int fd, struct in_addr addr)
 	
 	p->fd = fd;
 	p->req = req;
-	&((p->req)->type) = malloc(sizeof(int));
-	&((p->req)->mode) = malloc(sizeof(mode_t));
-	&((p->req)->size) = malloc(sizeof(size));
-	&((p->req)->path) = malloc(MAXPATH);
-	&((p->req)->hash) = malloc(BLOCKSIZE);
 	p->ipaddr = addr;
 	p->state = AWAITING_TYPE;
 	p->next = top;
@@ -734,11 +720,6 @@ static struct client *removeclient(struct client *top, int fd) {
     if (*p) {
         struct client *t = (*p)->next;
         printf("Removing client %d %s\n", fd, inet_ntoa((*p)->ipaddr));
-		free(&((*p)->req->type));
-		free(&((*p)->req->size));
-		free(&((*p)->req->mode));
-		free(&((*p)->req->hash));
-		free(&((*p)->req->path));
 		free((*p)->req);
         free(*p);
         *p = t;
