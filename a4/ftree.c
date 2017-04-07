@@ -602,7 +602,7 @@ int handleclient(struct client *p, struct client *top) {
 			char path[strlen(cwd) + strlen(current) + 1];
 			strncpy(path, cwd, strlen(cwd) + 1);
 			strncat(path, current, strlen(current) + 1);
-			strncat(path, path, strlen(path) + 1);
+			strncat(path, new, strlen(new) + 1);
 			
 			// open a file for writing
 			FILE *copy = fopen(path, "w");
