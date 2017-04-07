@@ -139,10 +139,10 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             // Wait for the server's response
             // First, we prepare to listen to multiple
             // file descriptors by initializing a set of file descriptors
-            int max_fd = sock_fd;
+            int max_fd = *sock_fd;
             fd_set all_fds, listen_fds;
             FD_ZERO(&all_fds);
-            FD_SET(sock_fd, &all_fds);
+            FD_SET(*sock_fd, &all_fds);
             int response = -1;
             
             while (response == -1) {
@@ -155,8 +155,8 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                 }
         
                 // If the server is ready for reading ...
-                if (FD_ISSET(sock_fd, &listen_fds)) {
-                    response = read(sock_fd, &response, sizeof(int));
+                if (FD_ISSET(*sock_fd, &listen_fds)) {
+                    response = read(*sock_fd, &response, sizeof(int));
                 }
             }
             
@@ -230,10 +230,10 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     // Wait for the server's response
                     // First, we prepare to listen to multiple
                     // file descriptors by initializing a set of file descriptors.
-                    int max_fd = sock_fd;
+                    int max_fd = *sock_fd;
                     fd_set all_fds, listen_fds;
                     FD_ZERO(&all_fds);
-                    FD_SET(sock_fd, &all_fds);
+                    FD_SET(*sock_fd, &all_fds);
                     int message = -1;
     
                     while (message == -1) {
@@ -245,8 +245,8 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                         }
         
                         // If the server is ready for reading ...
-                        if (FD_ISSET(sock_fd, &listen_fds)) {
-                            message = read(sock_fd, &message, sizeof(int));
+                        if (FD_ISSET(*sock_fd, &listen_fds)) {
+                            message = read(*sock_fd, &message, sizeof(int));
                         }
                     }
             
