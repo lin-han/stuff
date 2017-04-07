@@ -605,7 +605,7 @@ int handleclient(struct client *p, struct client *top) {
 			// open a file for writing
 			FILE *copy = fopen(path, "w");
 			if (copy == NULL) {
-				perror("server: fopen");
+				perror("server: fopen w");
 				return -1;
 			}
 			// write the transmitted data
