@@ -523,7 +523,7 @@ int handleclient(struct client *p, struct client *top) {
 				} else {
 					signal = ERROR;
 					if (write(p->fd, &signal, sizeof(int)) < 0) {
-						fprintf(stderr, "File type of %s incompatible", p->req->path);
+						fprintf(stderr, "File type of %s incompatible\n", p->req->path);
 						return -1;
 					}
 				}
