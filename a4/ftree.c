@@ -122,7 +122,8 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             }
             
             // Fill in the request type and hash to send to the server
-            strncpy(req->hash, hash(fsource), BLOCKSIZE);
+            char *hash_val = malloc(BLOCKSIZE);
+            strncpy(req->hash, hash(hash_val, fsource), BLOCKSIZE);
             req->type = REGFILE;
             
             // Send the request to the server
@@ -189,6 +190,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     }
                     
                     // Free the memory allocated by the request struct
+                    free(hash_val);
                     free(req);
                     
                     // Transmit the data from the file to the server
@@ -256,6 +258,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         }
         
         // Free the memory allocated by the request struct
+        free(hash_val);
         free(req);
         
         // Wait for the server's response
@@ -480,7 +483,7 @@ int handleclient(struct client *p, struct client *top) {
 				// otherwise set the next state back to the first, AWAITING_TYPE
 				p->state = AWAITING_TYPE;
 				// the stat struct for the file or directory in dest
-				struct stat *buf = malloc(sizeof(struct buf));
+				struct stat *buf = malloc(sizeof(struct stat));
 				int lst = lstat(p->req->path, buf);
 				int same = check_same(p->req, lst, buf);
 				// the files are the same, update the permissions
