@@ -1,5 +1,5 @@
 PORT=59863
-FLAGS = -DPORT=$(PORT) -g -Wall -std=c99
+FLAGS = -DPORT=$(PORT) -g -Wall -std=gnu99
 
 all: rcopy_client rcopy_server
 
