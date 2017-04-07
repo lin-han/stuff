@@ -137,8 +137,23 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             }
             
             // Wait for the server's response
+            // First, we prepare to listen to multiple
+            // file descriptors by initializing a set of file descriptors
+            int max_fd = sock_fd;
+            fd_set all_fds, listen_fds;
+            FD_ZERO(&all_fds);
+            FD_SET(sock_fd, &all_fds);
             int response = -1;
+            
             while (response == -1) {
+                // select updates the fd_set it receives, so we always use a copy and retain the original.
+                listen_fds = all_fds;
+                int nready = select(max_fd + 1, &listen_fds, NULL, NULL, NULL);
+                if (nready == -1) {
+                    fprintf(stderr, "Error encountered while copying %s: client: select\n", basename_relative_path);
+                    return 1;
+                }
+        
                 // If the server is ready for reading ...
                 if (FD_ISSET(sock_fd, &listen_fds)) {
                     response = read(sock_fd, &response, sizeof(int));
@@ -213,8 +228,22 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     }
                     
                     // Wait for the server's response
+                    // First, we prepare to listen to multiple
+                    // file descriptors by initializing a set of file descriptors.
+                    int max_fd = sock_fd;
+                    fd_set all_fds, listen_fds;
+                    FD_ZERO(&all_fds);
+                    FD_SET(sock_fd, &all_fds);
                     int message = -1;
+    
                     while (message == -1) {
+                        // select updates the fd_set it receives, so we always use a copy and retain the original.
+                        listen_fds = all_fds;
+                        int nready = select(max_fd + 1, &listen_fds, NULL, NULL, NULL);
+                        if (nready == -1) {
+                            fprintf(stderr, "Error encountered while copying %s: client: select\n", basename_relative_path);
+                        }
+        
                         // If the server is ready for reading ...
                         if (FD_ISSET(sock_fd, &listen_fds)) {
                             message = read(sock_fd, &message, sizeof(int));
