@@ -676,7 +676,7 @@ static struct client *removeclient(struct client *top, int fd) {
     if (*p) {
         struct client *t = (*p)->next;
         printf("Removing client %d %s\n", fd, inet_ntoa((*p)->ipaddr));
-		free(p->req);
+		free((*p)->req);
         free(*p);
         *p = t;
     } else {
