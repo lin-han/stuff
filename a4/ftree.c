@@ -443,17 +443,16 @@ void rcopy_server(unsigned short port) {
 				perror("server: accept");
 				exit(1);
 			}
+			FD_SET(client_fd, &all_fds);
             if (client_fd > max_fd) {
                 max_fd = client_fd;
             }
-            FD_SET(client_fd, &all_fds);
             printf("Accepted connection\n");
 			head = addclient(head, client_fd, q.sin_addr);
         }
 
         // Next, check the clients.
-		int i;
-        for (i = 0; i < max_fd; i++) {
+        for (int i = 0; i < max_fd; i++) {
 			if (FD_ISSET(i, &listen_fds)) {
 				for (p = head; p != NULL; p = p->next) {
 					if (p->fd == i) {
