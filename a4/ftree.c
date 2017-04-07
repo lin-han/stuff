@@ -702,11 +702,6 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 static struct client *addclient(struct client *top, int fd, struct in_addr addr) {
 	struct client *p = malloc(sizeof(struct client));
 	struct request *req = malloc(sizeof(struct request));
-	int *type = malloc(sizeof(int));
-	int *size = malloc(sizeof(size));
-	char *path = malloc(MAXPATH);
-	mode_t *mode = malloc(sizeof(mode_t));
-	char *hash = malloc(BLOCKSIZE);
 	
 	if (!p) {
 		perror("server: malloc");
@@ -717,11 +712,11 @@ static struct client *addclient(struct client *top, int fd, struct in_addr addr)
 	
 	p->fd = fd;
 	p->req = req;
-	(p->req)->type = type;
-	(p->req)->mode = mode;
-	(p->req)->size = size;
-	(p->req)->path = path;
-	(p->req)->hash = hash;
+	(p->req)->type = malloc(sizeof(int));
+	(p->req)->mode = malloc(sizeof(mode_t));
+	(p->req)->size = malloc(sizeof(size));
+	(p->req)->path = malloc(MAXPATH);
+	(p->req)->hash = malloc(BLOCKSIZE);
 	p->ipaddr = addr;
 	p->state = AWAITING_TYPE;
 	p->next = top;
