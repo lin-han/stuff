@@ -376,7 +376,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
 }
 
 void rcopy_server(unsigned short port) {
-	int client_fd, status, on = 1;
+	int client_fd;
 	struct client *head = NULL;
 	struct client *p;
 	struct sockaddr_in q;
