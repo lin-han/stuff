@@ -73,6 +73,10 @@ int rcopy_client(char *source, char *host, unsigned short port) {
     // Close the socket after all files have been transferred
     close(*sock_fd);
     
+    // Free the memory allocated by the client
+    free(server);
+    free(sock_fd);
+    
     // Return 0 only if copy_file returned 0,
     // having encountered no errors during file transfers
     // Otherwise, return -1
@@ -150,7 +154,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     // Child process
                     // Initiate a new connection with the server
                     // Create the socket FD.
-                    int *fork_sock_fd;
+                    int *fork_sock_fd = malloc(sizeof(int));
                     *fork_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
                     if (*fork_sock_fd < 0) {
                         fprintf(stderr, "Error encountered while copying %s: socket", basename_relative_path);
