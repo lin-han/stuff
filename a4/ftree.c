@@ -465,7 +465,7 @@ int handleclient(struct client *p, struct client *top) {
 			}
 			
 			type = ntohl(type);
-			p->req->type = type;
+			((p->req))->type = type;
 			p->state = AWAITING_PATH;
 			break;
 		// read in the path and store
@@ -479,7 +479,7 @@ int handleclient(struct client *p, struct client *top) {
 				return -1;
 			}
 			
-			strncpy(p->req->path, buf, MAXPATH);
+			strncpy((p->req)->path, buf, MAXPATH);
 			p->state = AWAITING_PERM;
 			break;
 		}
@@ -494,7 +494,7 @@ int handleclient(struct client *p, struct client *top) {
 			}
 			
 			mode = ntohl(mode);
-			p->req->mode = mode;
+			(p->req)->mode = mode;
 			p->state = AWAITING_HASH;
 			break;
 		}
@@ -508,7 +508,7 @@ int handleclient(struct client *p, struct client *top) {
 				return -1;
 			}
 			
-			strncpy(p->req->hash, hash, BLOCKSIZE);
+			strncpy((p->req)->hash, hash, BLOCKSIZE);
 			p->state = AWAITING_SIZE;
 			break;
 		}
@@ -524,20 +524,20 @@ int handleclient(struct client *p, struct client *top) {
 			}
 			
 			size = ntohl(size);
-			p->req->size = size;
+			(p->req)->size = size;
 			// if the client is not the main client, the next state should be AWAITING_DATA
-			if (p->req->type == TRANSFILE) {
+			if ((p->req)->type == TRANSFILE) {
 				p->state = AWAITING_DATA;
 			} else {
 				// otherwise set the next state back to the first, AWAITING_TYPE
 				p->state = AWAITING_TYPE;
 				// the stat struct for the file or directory in dest
 				struct stat *buf = malloc(sizeof(struct stat));
-				int lst = lstat(p->req->path, buf);
-				int same = check_same(p->req, lst, buf);
+				int lst = lstat((p->req)->path, buf);
+				int same = check_same((p->req), lst, buf);
 				// the files are the same, update the permissions
 				if (same == 0) {
-					if (chmod(p->req->path, p->req->mode & 0777) == -1) {
+					if (chmod((p->req)->path, (p->req)->mode & 0777) == -1) {
 						perror("server: chmod");
 						return -1;
 					}
@@ -558,7 +558,7 @@ int handleclient(struct client *p, struct client *top) {
 				} else if (same == 2) {
 					// make the directory with the correct permissions
 					int mkd = 0;
-					if ((mkd = mkdir(p->req->path, buf->st_mode & 0777)) == -1) {
+					if ((mkd = mkdir((p->req)->path, buf->st_mode & 0777)) == -1) {
 						perror("mkdir");
 						return -1;
 					}
@@ -572,7 +572,7 @@ int handleclient(struct client *p, struct client *top) {
 				} else {
 					signal = ERROR;
 					if (write(p->fd, &signal, sizeof(int)) < 0) {
-						fprintf(stderr, "File type of %s incompatible\n", p->req->path);
+						fprintf(stderr, "File type of %s incompatible\n", (p->req)->path);
 						return -1;
 					}
 				}
@@ -591,7 +591,7 @@ int handleclient(struct client *p, struct client *top) {
 				return -1;
 			}
 			// open a file for writing
-			FILE *copy = fopen(p->req->path, "w");
+			FILE *copy = fopen((p->req)->path, "w");
 			if (copy == NULL) {
 				perror("server: fopen");
 				return -1;
@@ -602,7 +602,7 @@ int handleclient(struct client *p, struct client *top) {
 				return -1;
 			}
 			// set the file permissions
-			if ((chmod(p->req->path, p->req->mode & 0777)) == -1) {
+			if ((chmod((p->req)->path, (p->req)->mode & 0777)) == -1) {
 				perror("server: chmod");
 				return -1;
 			}
