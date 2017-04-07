@@ -4,7 +4,6 @@
 #define BLOCK_SIZE 8
 
 char *hash(char *hash_val, FILE *f) {
-	char hash_val[BLOCK_SIZE];
     char ch;
     int hash_index = 0;
 
