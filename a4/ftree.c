@@ -657,7 +657,7 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 		return -1;
 	}
 	char *current = "/sandbox/dest";
-	char *new = (p->req)->path;
+	char *new = request->path;
 	char path[strlen(cwd) + strlen(current) + 1];
 	strncpy(path, cwd, strlen(cwd) + 1);
 	strncat(path, current, strlen(current) + 1);
