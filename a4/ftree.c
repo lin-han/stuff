@@ -438,6 +438,7 @@ void rcopy_server(unsigned short port) {
 
         // Is it the original socket? Create a new connection ...
         if (FD_ISSET(sock_fd, &listen_fds)) {
+			len = sizeof(q);
             if((client_fd = accept(sock_fd, (struct sockaddr *)&q, &len)) < 0) {
 				perror("server: accept");
 				exit(1);
