@@ -465,7 +465,7 @@ int handleclient(struct client *p, struct client *top) {
 			}
 			
 			type = ntohl(type);
-			((p->req))->type = type;
+			(p->req)->type = type;
 			p->state = AWAITING_PATH;
 			break;
 		// read in the path and store
@@ -649,6 +649,7 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 
 static struct client *addclient(struct client *top, int fd, struct in_addr addr) {
 	struct client *p = malloc(sizeof(struct client));
+	struct request *req = malloc(sizeof(struct request));
 	if (!p) {
 		perror("server: malloc");
 		exit(1);
@@ -657,6 +658,7 @@ static struct client *addclient(struct client *top, int fd, struct in_addr addr)
 	printf("Adding client %s\n", inet_ntoa(addr));
 	
 	p->fd = fd;
+	p->req = req;
 	p->ipaddr = addr;
 	p->state = AWAITING_TYPE;
 	p->next = top;
@@ -674,6 +676,7 @@ static struct client *removeclient(struct client *top, int fd) {
     if (*p) {
         struct client *t = (*p)->next;
         printf("Removing client %d %s\n", fd, inet_ntoa((*p)->ipaddr));
+		free(p->req);
         free(*p);
         *p = t;
     } else {
