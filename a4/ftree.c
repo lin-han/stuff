@@ -465,6 +465,7 @@ int handleclient(struct client *p, struct client *top) {
 			}
 			
 			type = ntohl(type);
+			printf("type %d\n", type);
 			(p->req)->type = type;
 			p->state = AWAITING_PATH;
 			break;
