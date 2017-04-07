@@ -29,6 +29,7 @@ static struct client *addclient(struct client *top, int fd, struct in_addr addr)
 static struct client *removeclient(struct client *top, int fd);
 int handleclient(struct client *p, struct client *top);
 int check_same(struct request *request, int lst, struct stat *buf);
+int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server);
 
 /* Connect to the server with host and port. Create a new socket
  * file descriptor to connect to and communicate with the server.
