@@ -144,7 +144,6 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             FD_ZERO(&all_fds);
             FD_SET(*sock_fd, &all_fds);
             int response = -1;
-            int numread;
             
             while (response == -1) {
                 // select updates the fd_set it receives, so we always use a copy and retain the original.
@@ -158,6 +157,10 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                 // If the server is ready for reading ...
                 if (FD_ISSET(*sock_fd, &listen_fds)) {
                     int num_read = read(*sock_fd, &response, sizeof(int));
+                    if (num_read != sizeof(int)) {
+                        fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
+                        return 1;
+                    }
                 }
             }
             
@@ -248,12 +251,11 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                         // If the server is ready for reading ...
                         if (FD_ISSET(*sock_fd, &listen_fds)) {
                             int num_read = read(*sock_fd, &message, sizeof(int));
+                            if (num_read != sizeof(int)) {
+                                fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
+                                return 1;
+                            }
                         }
-                    }
-            
-                    if (message != sizeof(int)) {
-                        fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
-                        return 1;
                     }
                     
                     // If the message is OK, close the socket and exit
@@ -325,12 +327,11 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             // If the server is ready for reading ...
             if (FD_ISSET(*sock_fd, &listen_fds)) {
                 int num_read = read(*sock_fd, &response, sizeof(int));
+                if (num_read != sizeof(int)) {
+                    fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
+                    return 1;
+                }
             }
-        }
-           
-        if (response != sizeof(int)) {
-            fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
-            return 1;
         }
         
         // If the files are incompatible
