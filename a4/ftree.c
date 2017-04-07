@@ -70,7 +70,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
     // Copy files
     int error = copy_file(source, bname, sock_fd, server);
     
-    Close the socket after all files have been transferred
+    // Close the socket after all files have been transferred
     close(*sock_fd);
     
     // Return 0 only if copy_file returned 0,
@@ -87,7 +87,7 @@ int rcopy_client(char *source, char *host, unsigned short port) {
  */
 int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct sockaddr_in *server) {
     int error = 0;
-    char *basename_relative_path = basename(source);
+    
     // Get file status
     struct stat sourcebuf;
     if (lstat(source, &sourcebuf) == -1) {
@@ -95,7 +95,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         return 1;
     }
     
-    
+    char *bname = basename(source);
     
     // Initialize and fill in the struct request to send to the server and
     // translate any numeric types to network order
