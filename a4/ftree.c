@@ -144,6 +144,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             FD_ZERO(&all_fds);
             FD_SET(*sock_fd, &all_fds);
             int response = -1;
+            int numread;
             
             while (response == -1) {
                 // select updates the fd_set it receives, so we always use a copy and retain the original.
@@ -156,7 +157,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         
                 // If the server is ready for reading ...
                 if (FD_ISSET(*sock_fd, &listen_fds)) {
-                    response = read(*sock_fd, &response, sizeof(int));
+                    int num_read = read(*sock_fd, &response, sizeof(int));
                 }
             }
             
@@ -246,7 +247,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         
                         // If the server is ready for reading ...
                         if (FD_ISSET(*sock_fd, &listen_fds)) {
-                            message = read(*sock_fd, &message, sizeof(int));
+                            int num_read = read(*sock_fd, &message, sizeof(int));
                         }
                     }
             
@@ -323,7 +324,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         
             // If the server is ready for reading ...
             if (FD_ISSET(*sock_fd, &listen_fds)) {
-                response = read(*sock_fd, &response, sizeof(int));
+                int num_read = read(*sock_fd, &response, sizeof(int));
             }
         }
            
