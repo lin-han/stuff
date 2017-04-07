@@ -461,6 +461,7 @@ void rcopy_server(unsigned short port) {
 							int tmp_fd = p->fd;
 							head = removeclient(head, tmp_fd);
 							FD_CLR(tmp_fd, &all_fds);
+							printf("Closed a connection\n");
 							close(tmp_fd);
 						}
 						break;
@@ -479,6 +480,7 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the request type and store it in the request struct in the corresponding client struct
 		case AWAITING_TYPE :
 		{
+			
 			int type;
 			if ((read_result = read(p->fd, &type, sizeof(int))) < 0) {
 				perror("read");
@@ -493,6 +495,7 @@ int handleclient(struct client *p, struct client *top) {
 		}
 		case AWAITING_PATH :
 		{
+			printf("path\n");
 			char buf[MAXPATH];
 			if ((read_result = read(p->fd, buf, MAXPATH)) < 0) {
 				perror("read");
@@ -506,6 +509,7 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the mode and store
 		case AWAITING_PERM :
 		{
+			printf("perm\n");
 			mode_t mode;
 			if ((read_result = read(p->fd, &mode, sizeof(mode))) < 0) {
 				perror("read");
@@ -520,6 +524,7 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the hash and store
 		case AWAITING_HASH :
 		{
+			printf("hash\n");
 			char hash[BLOCKSIZE];
 			if ((read_result = read(p->fd, hash, BLOCKSIZE)) < 0) {
 				perror("read");
@@ -533,6 +538,7 @@ int handleclient(struct client *p, struct client *top) {
 		// read in the size and store
 		case AWAITING_SIZE :
 		{
+			printf("size\n");
 			int size;
 			int signal;
 			if ((read_result = read(p->fd, &size, sizeof(int))) < 0) {
@@ -600,6 +606,7 @@ int handleclient(struct client *p, struct client *top) {
 		// the request type is TRANSFILE
 		case AWAITING_DATA :
 		{
+			printf("data\n");
 			char data[MAXDATA];
 			// read in the transmitted file data
 			if (read(p->fd, data, MAXDATA) < MAXDATA) {
