@@ -566,14 +566,16 @@ int handleclient(struct client *p, struct client *top) {
 
 // the function for deciding the response to the client's request
 int check_same(struct request *request, int lst, struct stat *buf) {
+	int ret = 0;
+	char *stream_hash = malloc(BLOCKSIZE);
 	// the case where the file already exists but file types are incompatible
 	if ((lst == 0 && (S_ISDIR(buf->st_mode) && request->type == REGFILE)) ||
 		(S_ISREG(buf->st_mode) && request->type == REGDIR)) {
-		return -1;
+		ret = -1;
 	}
 	// the case where the request is for a directory which doesn't already exist
 	if (lst == -1 && S_ISDIR(buf->st_mode)) {
-		return 2;
+		ret = 2;
 	}
 	// the case where the file already exists but is different
 	FILE *stream = fopen(request->path, "r");
@@ -581,14 +583,15 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 		perror("server: fopen");
 	}
 	if (lst == -1 || buf->st_size != request->size || 
-		(stream != NULL && check_hash(((char *)request->hash), hash(stream)))) {
-		return 1;
+		(stream != NULL && check_hash(((char *)request->hash), hash(stream_hash, stream)))) {
+		ret = 1;
 	}
 	if ((fclose(stream)) != 0) {
 		perror("server: fclose");
 	}
-	// there is no need to transmit the file data
-	return 0;
+	free(stream_hash);
+	// there is no need to transmit the file data if none of the if statements were entered
+	return ret;
 }
 
 static struct client *addclient(struct client *top, int fd, struct in_addr addr) {
