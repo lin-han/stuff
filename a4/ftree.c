@@ -480,7 +480,7 @@ int handleclient(struct client *p, struct client *top) {
 				// otherwise set the next state back to the first, AWAITING_TYPE
 				p->state = AWAITING_TYPE;
 				// the stat struct for the file or directory in dest
-				struct stat *buf;
+				struct stat *buf = malloc(sizeof(struct buf));
 				int lst = lstat(p->req->path, buf);
 				int same = check_same(p->req, lst, buf);
 				// the files are the same, update the permissions
@@ -524,6 +524,7 @@ int handleclient(struct client *p, struct client *top) {
 						return -1;
 					}
 				}
+				free(buf);
 			}
 			break;
 		}
