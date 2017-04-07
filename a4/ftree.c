@@ -650,21 +650,24 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 	}
 	// the case where the file already exists but is different
 	
-	// the new path for the copied file
+	// the path for the file
 	char cwd[MAXPATH];
 	if (getcwd(cwd, sizeof(cwd)) == NULL) {
 		perror("server: getcwd");
+		return -1;
 	}
 	char *current = "/sandbox/dest";
-	char *new = request->path;
+	char *new = (p->req)->path;
 	char path[strlen(cwd) + strlen(current) + 1];
 	strncpy(path, cwd, strlen(cwd) + 1);
 	strncat(path, current, strlen(current) + 1);
 	strncat(path, "/", 2);
 	strncat(path, new, strlen(new) + 1);
+			
+	// open a file for writing
 	FILE *stream = fopen(path, "r");
 	if (stream == NULL) {
-		perror("server: fopen");
+		perror("server: fopen r");
 	}
 	if (lst == -1 || buf->st_size != request->size || 
 		(stream != NULL && check_hash(((char *)request->hash), hash(stream_hash, stream)))) {
