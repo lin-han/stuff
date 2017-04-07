@@ -535,8 +535,23 @@ int handleclient(struct client *p, struct client *top) {
 				// otherwise set the next state back to the first, AWAITING_TYPE
 				p->state = AWAITING_TYPE;
 				// the stat struct for the file or directory in dest
+				
+				// the new path for the file or directory
+				char cwd[MAXPATH];
+				if (getcwd(cwd, sizeof(cwd)) == NULL) {
+					perror("server: getcwd");
+					return -1;
+				}
+				char *current = "/sandbox/dest";
+				char *new = (p->req)->path;
+				char path[strlen(cwd) + strlen(current) + 1];
+				strncpy(path, cwd, strlen(cwd) + 1);
+				strncat(path, current, strlen(current) + 1);
+				strncat(path, "/", 2);
+				strncat(path, new, strlen(new) + 1);
+			
 				struct stat *buf = malloc(sizeof(struct stat));
-				int lst = lstat((p->req)->path, buf);
+				int lst = lstat(path, buf);
 				int same = check_same((p->req), lst, buf);
 				// the files are the same, update the permissions
 				if (same == 0) {
@@ -642,14 +657,14 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 	// the case where the file already exists but file types are incompatible
 	if ((lst == 0 && (S_ISDIR(buf->st_mode) && request->type == REGFILE)) ||
 		(S_ISREG(buf->st_mode) && request->type == REGDIR)) {
-		ret = -1;
+		return -1;
 	}
 	// the case where the request is for a directory which doesn't already exist
 	if (lst == -1 && S_ISDIR(buf->st_mode)) {
-		ret = 2;
+		return 2;
 	}
+
 	// the case where the file already exists but is different
-	
 	// the path for the file
 	char cwd[MAXPATH];
 	if (getcwd(cwd, sizeof(cwd)) == NULL) {
@@ -663,9 +678,6 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 	strncat(path, current, strlen(current) + 1);
 	strncat(path, "/", 2);
 	strncat(path, new, strlen(new) + 1);
-	printf("%s\n", current);
-	printf("%s\n", cwd);
-	printf("%s\n", path);
 			
 	// open a file for reading
 	FILE *stream = fopen(path, "r");
