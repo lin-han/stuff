@@ -660,7 +660,7 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 		(S_ISREG(buf->st_mode) && request->type == REGDIR)) {
 		return -1;
 	}
-	print("lst %s type %s", lst, request->type);
+	printf("lst %s type %s", lst, request->type);
 	// the case where the file or directory doesn't already exist
 	if (lst == -1 && request->type == REGDIR) {
 		return 2;
