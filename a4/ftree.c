@@ -137,8 +137,15 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             }
             
             // Wait for the server's response
-            int response;
-            if (read(*sock_fd, &response, sizeof(int)) != sizeof(int)) {
+            int response = -1;
+            while (response == -1) {
+                // If the server is ready for reading ...
+                if (FD_ISSET(sock_fd, &listen_fds)) {
+                    response = read(sock_fd, &response, sizeof(int));
+                }
+            }
+            
+            if (response != sizeof(int)) {
                 fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
                 return 1;
             }
@@ -206,8 +213,15 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     }
                     
                     // Wait for the server's response
-                    int message;
-                    if (read(*fork_sock_fd, &message, sizeof(int)) != sizeof(int)) {
+                    int message = -1;
+                    while (message == -1) {
+                        // If the server is ready for reading ...
+                        if (FD_ISSET(sock_fd, &listen_fds)) {
+                            message = read(sock_fd, &message, sizeof(int));
+                        }
+                    }
+            
+                    if (message != sizeof(int)) {
                         fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
                         return 1;
                     }
