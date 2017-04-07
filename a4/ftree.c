@@ -95,7 +95,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
     // Get file status
     struct stat sourcebuf;
     if (lstat(source, &sourcebuf) == -1) {
-        fprintf(stderr, "Error encountered while copying %s: lstat", basename_relative_path);
+        fprintf(stderr, "Error encountered while copying %s: lstat\n", basename_relative_path);
         return 1;
     }
     
@@ -117,7 +117,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             // Open the file for reading
             FILE *fsource = fopen(source, "r");
             if (fsource == NULL) {
-                fprintf(stderr, "Error encountered while copying %s: fopen", basename_relative_path);
+                fprintf(stderr, "Error encountered while copying %s: fopen\n", basename_relative_path);
                 return 1;
             }
             
@@ -132,14 +132,14 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                 write(*sock_fd, &(mode), sizeof(int)) != sizeof(int) ||
                 write(*sock_fd, req->hash, sizeof(req->hash)) != BLOCKSIZE ||
                 write(*sock_fd, &(size), sizeof(int)) != sizeof(int)) {
-                fprintf(stderr, "Error encountered while copying %s: write", basename_relative_path);
+                fprintf(stderr, "Error encountered while copying %s: write\n", basename_relative_path);
                 return 1;
             }
             
             // Wait for the server's response
             int response;
             if (read(*sock_fd, &response, sizeof(int)) != sizeof(int)) {
-                fprintf(stderr, "Error encountered while copying %s: read", basename_relative_path);
+                fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
                 return 1;
             }
             
@@ -149,7 +149,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                 int result = fork();
                 
                 if (result == -1) {
-                    fprintf(stderr, "Error encountered while copying %s: fork", basename_relative_path);
+                    fprintf(stderr, "Error encountered while copying %s: fork\n", basename_relative_path);
                     return 1;
                 } else if (result == 0) {
                     // Child process
@@ -158,12 +158,12 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     int *fork_sock_fd = malloc(sizeof(int));
                     *fork_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
                     if (*fork_sock_fd < 0) {
-                        fprintf(stderr, "Error encountered while copying %s: socket", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: socket\n", basename_relative_path);
                         return 1;
                     }
     
                     if (connect(*fork_sock_fd, (struct sockaddr *)server, sizeof(*server)) == -1) {
-                        fprintf(stderr, "Error encountered while copying %s: connect", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: connect\n", basename_relative_path);
                         close(*fork_sock_fd);
                         return 1;
                     }
@@ -185,7 +185,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                         write(*fork_sock_fd, &(mode), sizeof(int)) != sizeof(int) ||
                         write(*fork_sock_fd, req->hash, sizeof(req->hash)) != BLOCKSIZE ||
                         write(*fork_sock_fd, &(size), sizeof(int)) != sizeof(int)) {
-                        fprintf(stderr, "Error encountered while copying %s: write", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: write\n", basename_relative_path);
                         return 1;
                     }
                     
@@ -196,19 +196,19 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                     // Transmit the data from the file to the server
                     char buf[MAXDATA];
                     if (fread(buf, 1, sizeof(buf), fsource) != MAXDATA) {
-                        fprintf(stderr, "Error encountered while copying %s: read", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
                         return 1;
                     }
                     
                     if (write(*fork_sock_fd, buf, sizeof(buf)) != MAXDATA) {
-                        fprintf(stderr, "Error encountered while copying %s: read", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
                         return 1;
                     }
                     
                     // Wait for the server's response
                     int message;
                     if (read(*fork_sock_fd, &message, sizeof(int)) != sizeof(int)) {
-                        fprintf(stderr, "Error encountered while copying %s: read", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
                         return 1;
                     }
                     
@@ -219,20 +219,20 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                         exit(0);
                     } else if (message == ERROR) {
                         close(*fork_sock_fd);
-                        fprintf(stderr, "Error encountered while copying %s: server ERROR", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: server ERROR\n", basename_relative_path);
                         exit(1);
                     }
                 } else if (result > 0) {
                     // Parent process
                     int status;
                     if (wait(&status) == -1) {
-                        fprintf(stderr, "Error encountered while copying %s: wait", basename_relative_path);
+                        fprintf(stderr, "Error encountered while copying %s: wait\n", basename_relative_path);
                         return 1;
                     }
                 }
             } else if (response == ERROR) {
                 // If the files are incompatible
-                fprintf(stderr, "Error encountered while copying %s: server ERROR", basename_relative_path);
+                fprintf(stderr, "Error encountered while copying %s: server ERROR\n", basename_relative_path);
                 return 1;
             }
         }        
@@ -253,7 +253,7 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             write(*sock_fd, &(mode), sizeof(int)) != sizeof(int) ||
             write(*sock_fd, req->hash, sizeof(req->hash)) != BLOCKSIZE ||
             write(*sock_fd, &(size), sizeof(int)) != sizeof(int)) {
-            fprintf(stderr, "Error encountered while copying %s: write", basename_relative_path);
+            fprintf(stderr, "Error encountered while copying %s: write\n", basename_relative_path);
             return 1;
         }
         
@@ -264,19 +264,19 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
         // Wait for the server's response
         int response;
         if (read(*sock_fd, &response, sizeof(int)) != sizeof(int)) {
-            fprintf(stderr, "Error encountered while copying %s: read", basename_relative_path);
+            fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
             return 1;
         }
         
         // If the files are incompatible
         if (response == ERROR) {
-            fprintf(stderr, "Error encountered while copying %s: server ERROR", basename_relative_path);
+            fprintf(stderr, "Error encountered while copying %s: server ERROR\n", basename_relative_path);
             return 1;    
         } else {
             // Otherwise, open the directory for reading
             DIR *dirp = opendir(source);
             if (dirp == NULL) {
-                fprintf(stderr, "Error encountered while copying %s: opendir", basename_relative_path);
+                fprintf(stderr, "Error encountered while copying %s: opendir\n", basename_relative_path);
                 return 1;
             }
             
