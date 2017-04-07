@@ -702,10 +702,10 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 static struct client *addclient(struct client *top, int fd, struct in_addr addr) {
 	struct client *p = malloc(sizeof(struct client));
 	struct request *req = malloc(sizeof(struct request));
-	int type = malloc(sizeof(int));
-	int size = malloc(sizeof(size));
+	int *type = malloc(sizeof(int));
+	int *size = malloc(sizeof(size));
 	char *path = malloc(MAXPATH);
-	mode_t mode = malloc(sizeof(mode_t));
+	mode_t *mode = malloc(sizeof(mode_t));
 	char *hash = malloc(BLOCKSIZE);
 	
 	if (!p) {
