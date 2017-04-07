@@ -550,11 +550,12 @@ int handleclient(struct client *p, struct client *top) {
 				strncat(path, "/", 2);
 				strncat(path, new, strlen(new) + 1);
 			
+				printf("%s\n", path);
 				struct stat *buf = malloc(sizeof(struct stat));
 				int lst = lstat(path, buf);
 				perror("lstat");
-				printf("lst %d type %d", (int) lst, (int) (p->req)->type);
-				int same = check_same((p->req), lst, buf);
+				printf("lst %d type %d\n", (int) lst, (int) (p->req)->type);
+				int same = check_same(p->req, lst, buf);
 				// the files are the same, update the permissions
 				if (same == 0) {
 					if (chmod((p->req)->path, (p->req)->mode & 0777) == -1) {
