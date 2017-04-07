@@ -663,9 +663,11 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 	strncat(path, current, strlen(current) + 1);
 	strncat(path, "/", 2);
 	strncat(path, new, strlen(new) + 1);
-	printf("%s", path);
+	printf("%s\n", current);
+	printf("%s\n", cwd);
+	printf("%s\n", path);
 			
-	// open a file for writing
+	// open a file for reading
 	FILE *stream = fopen(path, "r");
 	if (stream == NULL) {
 		perror("server: fopen r");
