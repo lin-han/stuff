@@ -168,8 +168,8 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
             
             if (response != sizeof(int)) {
                 fprintf(stderr, "Error encountered while copying %s: read\n", basename_relative_path);
-                return 1;
                 printf("2");
+                return 1;
             }
             
             // If the server asks for the file to be sent,
