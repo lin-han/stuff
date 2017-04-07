@@ -552,6 +552,7 @@ int handleclient(struct client *p, struct client *top) {
 			
 				struct stat *buf = malloc(sizeof(struct stat));
 				int lst = lstat(path, buf);
+				perror("lstat");
 				int same = check_same((p->req), lst, buf);
 				// the files are the same, update the permissions
 				if (same == 0) {
@@ -659,8 +660,8 @@ int check_same(struct request *request, int lst, struct stat *buf) {
 		(S_ISREG(buf->st_mode) && request->type == REGDIR)) {
 		return -1;
 	}
-	// the case where the request is for a directory which doesn't already exist
-	if (lst == -1 && S_ISDIR(buf->st_mode)) {
+	// the case where the file or directory doesn't already exist
+	if (lst == -1 && request->type == REGDIR) {
 		return 2;
 	}
 
