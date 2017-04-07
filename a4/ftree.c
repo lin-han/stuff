@@ -712,11 +712,11 @@ static struct client *addclient(struct client *top, int fd, struct in_addr addr)
 	
 	p->fd = fd;
 	p->req = req;
-	(p->req)->type = malloc(sizeof(int));
-	(p->req)->mode = malloc(sizeof(mode_t));
-	(p->req)->size = malloc(sizeof(size));
-	(p->req)->path = malloc(MAXPATH);
-	(p->req)->hash = malloc(BLOCKSIZE);
+	&((p->req)->type) = malloc(sizeof(int));
+	&((p->req)->mode) = malloc(sizeof(mode_t));
+	&((p->req)->size) = malloc(sizeof(size));
+	&((p->req)->path) = malloc(MAXPATH);
+	&((p->req)->hash) = malloc(BLOCKSIZE);
 	p->ipaddr = addr;
 	p->state = AWAITING_TYPE;
 	p->next = top;
@@ -734,11 +734,11 @@ static struct client *removeclient(struct client *top, int fd) {
     if (*p) {
         struct client *t = (*p)->next;
         printf("Removing client %d %s\n", fd, inet_ntoa((*p)->ipaddr));
-		free((*p)->req->type);
-		free((*p)->req->size);
-		free((*p)->req->mode);
-		free((*p)->req->hash);
-		free((*p)->req->path);
+		free(&((*p)->req->type));
+		free(&((*p)->req->size));
+		free(&((*p)->req->mode));
+		free(&((*p)->req->hash));
+		free(&((*p)->req->path));
 		free((*p)->req);
         free(*p);
         *p = t;
