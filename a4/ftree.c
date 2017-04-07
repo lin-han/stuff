@@ -463,7 +463,7 @@ int handleclient(struct client *p, struct client *top) {
 				perror("read");
 				return -1;
 			}
-			
+			printf("type %d\n", type);
 			type = ntohl(type);
 			printf("type %d\n", type);
 			(p->req)->type = type;
