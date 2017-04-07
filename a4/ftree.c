@@ -235,6 +235,9 @@ int copy_file(char *source, char *basename_relative_path, int *sock_fd, struct s
                         return 1;
                     }
                     
+                    // Close the file
+                    fclose(fsource);
+                    
                     // Wait for the server's response
                     // First, we prepare to listen to multiple
                     // file descriptors by initializing a set of file descriptors.
